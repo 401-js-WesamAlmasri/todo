@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import TodoForm from '../../components/form/form.js';
-import TodoList from '../../components/list/list.js';
+import TodoForm from '../../components/Form/Form.js';
+import TodoList from '../../components/List/List.js';
+import Header from '../../components/Header/Header';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 import './HomePage.scss';
+import MainHeader from '../../components/MainHeader/MainHeader.js';
 
 const HomePage = (props) => {
   const [list, setList] = useState([]);
@@ -67,25 +72,29 @@ const HomePage = (props) => {
     setList(list);
   }, []);
 
+  useEffect(() => {
+    const completedTasks = list.filter((item) => item.complete).length;
+    document.title = `To Do List ${completedTasks}/${list.length}`;
+  }, [list]);
+
   return (
-    <>
-      <header>
-        <h2>
-          There are {list.filter((item) => !item.complete).length} Items To
-          Complete
-        </h2>
-      </header>
-
-      <section className='todo'>
-        <div>
+    <Container fluid={true}>
+      <Header list={list} />
+      <Container fluid={false}>
+        <Row className='bg-dark my-4'>
+          <MainHeader list={list} />
+        </Row>
+      <Row>
+        <Col className='col-4'>
           <TodoForm handleSubmit={addItem} />
-        </div>
+        </Col>
 
-        <div>
+        <Col className='col-8'>
           <TodoList list={list} handleComplete={toggleComplete} />
-        </div>
-      </section>
-    </>
+        </Col>
+      </Row>
+      </Container>
+    </Container>
   );
 };
 

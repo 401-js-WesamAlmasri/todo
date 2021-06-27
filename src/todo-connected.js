@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import TodoForm from './form.js';
-import TodoList from './list.js';
+import TodoForm from './components/Form/Form';
+import TodoList from './components/List/List';
 
-import './pages/HomePage/HomePage.scss';
+import './todo-connected.scss';
 
 const todoAPI = 'https://api-js401.herokuapp.com/api/v1/todo';
 
