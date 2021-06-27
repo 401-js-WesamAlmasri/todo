@@ -30,6 +30,12 @@ const HomePage = (props) => {
     }
   };
 
+  const deleteItem = (id) => {
+    console.log('ID : ', id);
+      let updatedList = list.filter((listItem) => listItem._id !== id);
+      setList(updatedList);
+  };
+
   useEffect(() => {
     let list = [
       {
@@ -84,15 +90,19 @@ const HomePage = (props) => {
         <Row className='bg-dark my-4'>
           <MainHeader list={list} />
         </Row>
-      <Row>
-        <Col className='col-4'>
-          <TodoForm handleSubmit={addItem} />
-        </Col>
+        <Row>
+          <Col className='col-4'>
+            <TodoForm handleSubmit={addItem} />
+          </Col>
 
-        <Col className='col-8'>
-          <TodoList list={list} handleComplete={toggleComplete} />
-        </Col>
-      </Row>
+          <Col className='col-8'>
+            <TodoList
+              list={list}
+              handleDelete={deleteItem}
+              handleComplete={toggleComplete}
+            />
+          </Col>
+        </Row>
       </Container>
     </Container>
   );
