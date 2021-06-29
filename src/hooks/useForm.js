@@ -1,18 +1,19 @@
 import { useState } from 'react';
 
-const useForm = (cb) => {
-  const [item, setItem] = useState({});
+const useForm = (cb, initialState = {}, reset=true) => {
+  const [items, setItems] = useState(initialState);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    e.target.reset();
-    cb(item);
+    if(reset) e.target.reset();
+    cb(items);
   };
 
   const handleChange = (e) => {
-    setItem({ ...item, [e.target.name]: e.target.value });
+    if(e.target.type === 'checkbox') e.target.value = e.target.checked ? true : false;  
+    setItems({ ...items, [e.target.name]: e.target.value });
   };
-  return [handleSubmit, handleChange, item];
+  return [handleSubmit, handleChange, items];
 };
 
 export default useForm;

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import TodoForm from '../../components/Form/Form.js';
 import TodoList from '../../components/List/List.js';
-import Header from '../../components/Header/Header';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -101,7 +100,6 @@ const HomePage = (props) => {
 
   return (
     <Container fluid={true}>
-      <Header list={list} />
       <Container fluid={false}>
         <Row className='bg-dark my-4'>
           <MainHeader list={list} />

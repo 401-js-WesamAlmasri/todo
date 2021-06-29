@@ -27,6 +27,7 @@ const TodoList = (props) => {
     <>
       <ListGroup className='ml-4'>
         {props.list
+          .filter(item => settingState.hideCompleteItem ? !item.complete : true )
           .sort((a, b) => b[settingState.sortField] - a[settingState.sortField])
           .slice(start, end)
           .map((item) => (
