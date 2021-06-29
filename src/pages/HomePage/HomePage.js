@@ -14,8 +14,9 @@ import MainHeader from '../../components/MainHeader/MainHeader.js';
 const todoAPI = 'https://api-js401.herokuapp.com/api/v1/todo';
 
 const HomePage = (props) => {
+  // states for fetching api
   const [list, setList] = useState([]);
-  const [results, loading, reload] = useAjax(todoAPI, 'get', null);
+  const [results, loading] = useAjax(todoAPI, 'get', null);
   const [addedItem, addItemLoading, addItemReload] = useAjax();
   const [deletedItem, deleteItemLoading, deleteItemReload] = useAjax();
   const [updatedItem, updateItemLoading, updateItemReload] = useAjax();
@@ -55,29 +56,41 @@ const HomePage = (props) => {
 
   // update list on update item
   useEffect(() => {
-    if (!updateItemLoading && updatedItem) {
-      setList(
-        list.map((listItem) =>
+    setList((list) => {
+      if (!updateItemLoading && updatedItem) {
+        return list.map((listItem) =>
           listItem._id === updatedItem.data._id ? updatedItem.data : listItem
-        )
-      );
-    }
+        );
+      } else {
+        return list;
+      }
+    });
   }, [updateItemLoading]);
 
   // update list on delete an item
   useEffect(() => {
-    if (!deleteItemLoading && deletedItem)
-      setList(list.filter((listItem) => listItem._id !== deletedItem.data._id));
+    setList(list => {
+      if (!deleteItemLoading && deletedItem)
+        return list.filter((listItem) => listItem._id !== deletedItem.data._id);
+      else 
+      return list;
+      });
   }, [deleteItemLoading]);
 
   // update list on add item
   useEffect(() => {
-    if (!addItemLoading && addedItem) setList([...list, addedItem.data]);
+    setList((list) => {
+      if (!addItemLoading && addedItem)
+        return [...list, addedItem.data]
+      else
+        return list;
+    });
   }, [addItemLoading]);
 
   // update list on first open the page
   useEffect(() => {
-    if (!loading) if (results.data.results) setList(results.data.results);
+    if (!loading && results.data.results) setList(results.data.results);
+    else setList([]);
   }, [loading]);
 
   // update the document title
