@@ -5,6 +5,8 @@ import Header from '../../components/Header/Header';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import useAjax from '../../hooks/useAjax';
+import Spinner from 'react-bootstrap/Spinner';
 
 import './HomePage.scss';
 import MainHeader from '../../components/MainHeader/MainHeader.js';
@@ -13,22 +15,14 @@ const todoAPI = 'https://api-js401.herokuapp.com/api/v1/todo';
 
 const HomePage = (props) => {
   const [list, setList] = useState([]);
-  
-  
+  const [results, loading, reload] = useAjax(todoAPI, 'get', null);
+  const [addedItem, addItemLoading, addItemReload] = useAjax();
+  const [deletedItem, deleteItemLoading, deleteItemReload] = useAjax();
+  const [updatedItem, updateItemLoading, updateItemReload] = useAjax();
+
   const addItem = (item) => {
     item.due = new Date();
-    fetch(todoAPI, {
-      method: 'post',
-      mode: 'cors',
-      cache: 'no-cache',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(item),
-    })
-      .then((response) => response.json())
-      .then((savedItem) => {
-        setList([...list, savedItem]);
-      })
-      .catch(console.error);
+    addItemReload(todoAPI, 'post', JSON.stringify(item));
   };
 
   const updateItem = (id, text) => {
@@ -39,22 +33,7 @@ const HomePage = (props) => {
 
       let url = `${todoAPI}/${id}`;
 
-      fetch(url, {
-        method: 'put',
-        mode: 'cors',
-        cache: 'no-cache',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(item),
-      })
-        .then((response) => response.json())
-        .then((savedItem) => {
-          setList(
-            list.map((listItem) =>
-              listItem._id === item._id ? savedItem : listItem
-            )
-          );
-        })
-        .catch(console.error);
+      updateItemReload(url, 'put', JSON.stringify(item));
     }
   };
 
@@ -65,58 +44,43 @@ const HomePage = (props) => {
       item.complete = !item.complete;
 
       let url = `${todoAPI}/${id}`;
-
-      fetch(url, {
-        method: 'put',
-        mode: 'cors',
-        cache: 'no-cache',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(item),
-      })
-        .then((response) => response.json())
-        .then((savedItem) => {
-          setList(
-            list.map((listItem) =>
-              listItem._id === item._id ? savedItem : listItem
-            )
-          );
-        })
-        .catch(console.error);
+      updateItemReload(url, 'put', JSON.stringify(item));
     }
   };
 
   const deleteItem = (id) => {
-
-      let url = `${todoAPI}/${id}`;
-
-      fetch(url, {
-        method: 'delete',
-        mode: 'cors',
-        cache: 'no-cache',
-        headers: { 'Content-Type': 'application/json' },
-      })
-        .then((response) => response.json())
-        .then((deletedItem) => {
-          setList(
-            list.filter(listItem => listItem._id !== deletedItem._id )
-          );
-        })
-        .catch(console.error);
+    let url = `${todoAPI}/${id}`;
+    deleteItemReload(url, 'delete');
   };
 
+  // update list on update item
+  useEffect(() => {
+    if (!updateItemLoading && updatedItem) {
+      setList(
+        list.map((listItem) =>
+          listItem._id === updatedItem.data._id ? updatedItem.data : listItem
+        )
+      );
+    }
+  }, [updateItemLoading]);
 
-  const getTodoItems = () => {
-    fetch(todoAPI, {
-      method: 'get',
-      mode: 'cors',
-    })
-      .then((data) => data.json())
-      .then((data) => setList(data.results))
-      .catch(console.error);
-  };
+  // update list on delete an item
+  useEffect(() => {
+    if (!deleteItemLoading && deletedItem)
+      setList(list.filter((listItem) => listItem._id !== deletedItem.data._id));
+  }, [deleteItemLoading]);
 
-  useEffect(getTodoItems, []);
+  // update list on add item
+  useEffect(() => {
+    if (!addItemLoading && addedItem) setList([...list, addedItem.data]);
+  }, [addItemLoading]);
 
+  // update list on first open the page
+  useEffect(() => {
+    if (!loading) if (results.data.results) setList(results.data.results);
+  }, [loading]);
+
+  // update the document title
   useEffect(() => {
     const completedTasks = list.filter((item) => item.complete).length;
     document.title = `To Do List ${completedTasks}/${list.length}`;
@@ -135,12 +99,16 @@ const HomePage = (props) => {
           </Col>
 
           <Col className='col-8'>
-            <TodoList
-              list={list}
-              handleDelete={deleteItem}
-              handleComplete={toggleComplete}
-              handleUpdate={updateItem}
-            />
+            {false ? (
+              <Spinner animation='border' />
+            ) : (
+              <TodoList
+                list={list}
+                handleDelete={deleteItem}
+                handleComplete={toggleComplete}
+                handleUpdate={updateItem}
+              />
+            )}
           </Col>
         </Row>
       </Container>
