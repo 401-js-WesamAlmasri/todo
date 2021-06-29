@@ -1,22 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
+import useForm from '../../hooks/useForm';
 
 const TodoForm = (props) => {
-  const [item, setItem] = useState({});
-
-  const handleInputChange = (e) => {
-    setItem({ ...item, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
-    console.log('hoooooore');
-    e.preventDefault();
-    e.target.reset();
-    props.handleSubmit(item);
-    setItem({});
-  };
+  const [handleSubmit, handleChange, item] = useForm(props.handleSubmit);
 
   return (
     <>
@@ -29,7 +18,7 @@ const TodoForm = (props) => {
               name='text'
               type='text'
               placeholder='Add To Do List Item'
-              onChange={handleInputChange}
+              onChange={handleChange}
             />
           </Form.Group>
           <Form.Group className='mb-3'>
@@ -41,7 +30,7 @@ const TodoForm = (props) => {
               min='1'
               max='5'
               name='difficulty'
-              onChange={handleInputChange}
+              onChange={handleChange}
             />
           </Form.Group>
           <Form.Group className='mb-3'>
@@ -50,7 +39,7 @@ const TodoForm = (props) => {
               type='text'
               name='assignee'
               placeholder='Assigned To'
-              onChange={handleInputChange}
+              onChange={handleChange}
             />
           </Form.Group>
           <Button type='submit' className='w-50' variant='primary'>
