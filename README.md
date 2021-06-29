@@ -10,7 +10,7 @@
 
 ## UML
 
-![uml](assets/todo.png)
+![uml](assets/todo1.png)
 
 ## Deployed Link
 
