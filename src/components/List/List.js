@@ -12,7 +12,7 @@ const TodoList = (props) => {
   const start = (page - 1) * settingState.pageSize;
   const end = start + settingState.pageSize;
 
-  const numberOfPages = props.list.length / settingState.pageSize;
+  const numberOfPages = Math.ceil(props.list.length / settingState.pageSize);
 
   const paginationItems = [];
   for (let p = 1; p <= numberOfPages; p++) {
