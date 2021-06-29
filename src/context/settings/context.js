@@ -18,10 +18,12 @@ const SettingProvider = (props) => {
 
   useEffect(() => {
     const savedPreferences = JSON.parse(localStorage.getItem('preferences'));
-    console.log('context first time', savedPreferences);
-    setHideCompleteItem(Boolean(savedPreferences.hideCompleteItem));
-    setPageSize(savedPreferences.pageSize);
-    setSortField(savedPreferences.sortField);
+    if (savedPreferences) {
+      console.log('context first time', savedPreferences);
+      setHideCompleteItem(Boolean(savedPreferences.hideCompleteItem));
+      setPageSize(savedPreferences.pageSize);
+      setSortField(savedPreferences.sortField);
+    }
   }, []);
 
   return (
