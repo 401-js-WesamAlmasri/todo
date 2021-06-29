@@ -5,7 +5,7 @@ import Card from 'react-bootstrap/Card';
 import useForm from '../../hooks/useForm';
 
 const TodoForm = (props) => {
-  const [handleSubmit, handleChange, item] = useForm(props.handleSubmit);
+  const [handleSubmit, handleChange] = useForm(props.handleSubmit);
 
   return (
     <>
