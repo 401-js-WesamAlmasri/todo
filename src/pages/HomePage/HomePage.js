@@ -9,13 +9,53 @@ import Col from 'react-bootstrap/Col';
 import './HomePage.scss';
 import MainHeader from '../../components/MainHeader/MainHeader.js';
 
+const todoAPI = 'https://api-js401.herokuapp.com/api/v1/todo';
+
 const HomePage = (props) => {
   const [list, setList] = useState([]);
-
+  
+  
   const addItem = (item) => {
-    item._id = Math.random();
-    item.complete = false;
-    setList([...list, item]);
+    item.due = new Date();
+    fetch(todoAPI, {
+      method: 'post',
+      mode: 'cors',
+      cache: 'no-cache',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(item),
+    })
+      .then((response) => response.json())
+      .then((savedItem) => {
+        setList([...list, savedItem]);
+      })
+      .catch(console.error);
+  };
+
+  const updateItem = (id, text) => {
+    let item = list.filter((i) => i._id === id)[0] || {};
+
+    if (item._id) {
+      item.text = text;
+
+      let url = `${todoAPI}/${id}`;
+
+      fetch(url, {
+        method: 'put',
+        mode: 'cors',
+        cache: 'no-cache',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(item),
+      })
+        .then((response) => response.json())
+        .then((savedItem) => {
+          setList(
+            list.map((listItem) =>
+              listItem._id === item._id ? savedItem : listItem
+            )
+          );
+        })
+        .catch(console.error);
+    }
   };
 
   const toggleComplete = (id) => {
@@ -23,60 +63,59 @@ const HomePage = (props) => {
 
     if (item._id) {
       item.complete = !item.complete;
-      let updatedList = list.map((listItem) =>
-        listItem._id === item._id ? item : listItem
-      );
-      setList(updatedList);
+
+      let url = `${todoAPI}/${id}`;
+
+      fetch(url, {
+        method: 'put',
+        mode: 'cors',
+        cache: 'no-cache',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(item),
+      })
+        .then((response) => response.json())
+        .then((savedItem) => {
+          setList(
+            list.map((listItem) =>
+              listItem._id === item._id ? savedItem : listItem
+            )
+          );
+        })
+        .catch(console.error);
     }
   };
 
   const deleteItem = (id) => {
-    console.log('ID : ', id);
-      let updatedList = list.filter((listItem) => listItem._id !== id);
-      setList(updatedList);
+
+      let url = `${todoAPI}/${id}`;
+
+      fetch(url, {
+        method: 'delete',
+        mode: 'cors',
+        cache: 'no-cache',
+        headers: { 'Content-Type': 'application/json' },
+      })
+        .then((response) => response.json())
+        .then((deletedItem) => {
+          setList(
+            list.filter(listItem => listItem._id !== deletedItem._id )
+          );
+        })
+        .catch(console.error);
   };
 
-  useEffect(() => {
-    let list = [
-      {
-        _id: 1,
-        complete: false,
-        text: 'Clean the Kitchen',
-        difficulty: 3,
-        assignee: 'Person A',
-      },
-      {
-        _id: 2,
-        complete: false,
-        text: 'Do the Laundry',
-        difficulty: 2,
-        assignee: 'Person A',
-      },
-      {
-        _id: 3,
-        complete: false,
-        text: 'Walk the Dog',
-        difficulty: 4,
-        assignee: 'Person B',
-      },
-      {
-        _id: 4,
-        complete: true,
-        text: 'Do Homework',
-        difficulty: 3,
-        assignee: 'Person C',
-      },
-      {
-        _id: 5,
-        complete: false,
-        text: 'Take a Nap',
-        difficulty: 1,
-        assignee: 'Person B',
-      },
-    ];
 
-    setList(list);
-  }, []);
+  const getTodoItems = () => {
+    fetch(todoAPI, {
+      method: 'get',
+      mode: 'cors',
+    })
+      .then((data) => data.json())
+      .then((data) => setList(data.results))
+      .catch(console.error);
+  };
+
+  useEffect(getTodoItems, []);
 
   useEffect(() => {
     const completedTasks = list.filter((item) => item.complete).length;
@@ -100,6 +139,7 @@ const HomePage = (props) => {
               list={list}
               handleDelete={deleteItem}
               handleComplete={toggleComplete}
+              handleUpdate={updateItem}
             />
           </Col>
         </Row>

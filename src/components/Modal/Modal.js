@@ -13,8 +13,8 @@ const Modal = (props) => {
     setText(e.target.value);
   }
 
-  const handleSave = (e) => {
-    console.log('saved');
+  const handleSave = () => {
+    props.handleUpdate(props.item._id, text);
     setShow(false);
   }
 

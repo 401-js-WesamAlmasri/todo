@@ -7,9 +7,11 @@ const TodoList = (props) => {
     <ListGroup className='ml-4'>
       {props.list.map((item) => (
         <Card
+          key={item._id}
           item={item}
           handleComplete={props.handleComplete}
           handleDelete={props.handleDelete}
+          handleUpdate={props.handleUpdate}
         />
       ))}
     </ListGroup>
