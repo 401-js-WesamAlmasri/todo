@@ -15,10 +15,10 @@ const todoAPI = 'https://api-js401.herokuapp.com/api/v1/todo';
 const HomePage = (props) => {
   // states for fetching api
   const [list, setList] = useState([]);
-  const [results, loading] = useAjax(todoAPI, 'get', null);
-  const [addedItem, addItemLoading, addItemReload] = useAjax();
-  const [deletedItem, deleteItemLoading, deleteItemReload] = useAjax();
-  const [updatedItem, updateItemLoading, updateItemReload] = useAjax();
+  const [results] = useAjax(todoAPI, 'get', null);
+  const [addedItem, addItemReload] = useAjax();
+  const [deletedItem, deleteItemReload] = useAjax();
+  const [updatedItem, updateItemReload] = useAjax();
 
   const addItem = (item) => {
     item.due = new Date();
@@ -56,7 +56,7 @@ const HomePage = (props) => {
   // update list on update item
   useEffect(() => {
     setList((list) => {
-      if (!updateItemLoading && updatedItem) {
+      if (updatedItem && updatedItem.data) {
         return list.map((listItem) =>
           listItem._id === updatedItem.data._id ? updatedItem.data : listItem
         );
@@ -64,33 +64,37 @@ const HomePage = (props) => {
         return list;
       }
     });
-  }, [updateItemLoading]);
+  }, [updatedItem]);
 
   // update list on delete an item
   useEffect(() => {
     setList(list => {
-      if (!deleteItemLoading && deletedItem)
+      if (deletedItem && deletedItem.data)
         return list.filter((listItem) => listItem._id !== deletedItem.data._id);
       else 
       return list;
       });
-  }, [deleteItemLoading]);
+  }, [deletedItem]);
 
   // update list on add item
   useEffect(() => {
     setList((list) => {
-      if (!addItemLoading && addedItem)
+      if (addedItem && addedItem.data)
         return [...list, addedItem.data]
       else
         return list;
     });
-  }, [addItemLoading]);
+  }, [addedItem]);
 
   // update list on first open the page
   useEffect(() => {
-    if (!loading && results.data.results) setList(results.data.results);
-    else setList([]);
-  }, [loading]);
+    setList(() => {
+      if (results) 
+        return results.data.results;
+      else 
+        return [];
+    });
+  }, [results]);
 
   // update the document title
   useEffect(() => {

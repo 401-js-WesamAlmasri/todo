@@ -11,15 +11,15 @@ const SettingPage = (props) => {
 
   const savePreferences = (items) => {
       btnRef.current.innerText = 'Saving'
-      settingState.setHideCompleteItem(() => items.hideCompleteItem === 'true'? true : false);
-      settingState.setPageSize(() => items.pageSize);
+      settingState.setHideCompleteItem(() => items.hideCompleteItem === 'true' ? true : false);
+      settingState.setPageSize(() => parseInt(items.pageSize));
       settingState.setSortField(() => items.sortField);
       localStorage.setItem('preferences', JSON.stringify(items));
       setTimeout(() => btnRef.current.innerText = 'Save preferences', 500);
   };
   const initialState = {
     hideCompleteItem: settingState.hideCompleteItem,
-    pageSize: settingState.pageSize,
+    pageSize: parseInt(settingState.pageSize),
     sortField: settingState.sortField
   }
   const [handleSubmit, handleChange] = useForm(savePreferences, initialState, false);

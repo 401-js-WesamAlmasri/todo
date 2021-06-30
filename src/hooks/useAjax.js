@@ -30,9 +30,9 @@ const useAjax = (endPoint, reqMethod = 'get', body = {}) => {
         setLoading(false);
       }
     })();
-  }, [url, method, data]);
+  }, [url, method, data, loading]);
 
-  const reload = (url, method, data) => {
+  const reload = (url=endPoint, method=reqMethod, data=body) => {
     setUrl(url);
     setMethod(method);
     setData(data);
@@ -40,7 +40,7 @@ const useAjax = (endPoint, reqMethod = 'get', body = {}) => {
     setError(null);
   };
 
-  return [results, loading, reload, error];
+  return [results, reload, loading, error];
 };
 
 export default useAjax;
