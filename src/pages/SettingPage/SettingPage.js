@@ -4,6 +4,7 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import useForm from '../../hooks/useForm';
+import LoggedIn from '../../components/LoggedIn/LoggedIn';
 
 const SettingPage = (props) => {
   const settingState = useContext(settingContext);
@@ -80,4 +81,4 @@ const SettingPage = (props) => {
   );
 };
 
-export default SettingPage;
+export default LoggedIn(SettingPage);

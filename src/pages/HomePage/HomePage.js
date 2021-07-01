@@ -6,6 +6,8 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import useAjax from '../../hooks/useAjax';
 import Spinner from 'react-bootstrap/Spinner';
+import LoggedIn from '../../components/LoggedIn/LoggedIn';
+
 
 import './HomePage.scss';
 import MainHeader from '../../components/MainHeader/MainHeader.js';
@@ -131,4 +133,4 @@ const HomePage = (props) => {
   );
 };
 
-export default HomePage;
+export default LoggedIn(HomePage);
