@@ -23,6 +23,7 @@ const TodoList = (props) => {
     .slice(start, end);
 
   const paginationItems = [];
+
   for (let p = 1; p <= numberOfPages; p++) {
     paginationItems.push(
       <Pagination.Item onClick={() => setPage(p)} key={p} active={p === page}>
@@ -46,7 +47,13 @@ const TodoList = (props) => {
           ))}
       </ListGroup>
       <div>
-        <Pagination >{paginationItems}</Pagination>
+        <Pagination >
+          <Pagination.First onClick={() => setPage(1)} disabled={1 === page} />
+          <Pagination.Prev onClick={() => setPage(p => p - 1)} disabled={1 === page}/>
+          {paginationItems}
+          <Pagination.Next onClick={() => setPage(p => p + 1)} disabled={numberOfPages === page} />
+          <Pagination.Last onClick={() => setPage(numberOfPages)} disabled={numberOfPages === page} />
+        </Pagination>
       </div>
     </>
   );
