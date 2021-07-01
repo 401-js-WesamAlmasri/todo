@@ -7,7 +7,7 @@ const useAjax = (endPoint, reqMethod = 'get', body = {}, authParams={}) => {
   const [data, setData] = useState(body);
   const [auth, setAuth] = useState(authParams);
   const [results, setResults] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -22,6 +22,7 @@ const useAjax = (endPoint, reqMethod = 'get', body = {}, authParams={}) => {
     (async () => {
       try {
         if (url) {
+          setLoading(true);
           const response = await axios(options);
           setResults(response);
           setLoading(false);
@@ -33,7 +34,7 @@ const useAjax = (endPoint, reqMethod = 'get', body = {}, authParams={}) => {
         setLoading(false);
       }
     })();
-  }, [url, method, data, loading, auth]);
+  }, [url, method, data, auth]);
 
   const reload = (url = endPoint, method = reqMethod, data = body, authParams = auth) => {
     setUrl(url);

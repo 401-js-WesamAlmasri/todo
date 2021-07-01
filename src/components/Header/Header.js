@@ -19,11 +19,14 @@ const Footer = (props) => {
               <NavLink className='nav-link' to='/settings'>
                 Settings
               </NavLink>
-              <Navbar.Text>Welcome : {user.username}</Navbar.Text>
+              <Navbar.Text className='text-light'>Hello {user.username || user.type}</Navbar.Text>
               <NavLink className='nav-link' to='/login' onClick={logout}>Logout</NavLink>
             </>
           ) : (
-              <NavLink className='nav-link' to='/login'>Login</NavLink>
+              <>
+                <NavLink className='nav-link' to='/login'>Login</NavLink>
+                <NavLink className='nav-link' to='/register'>Register</NavLink>
+              </>
           )}
         </Nav>
       </Navbar>

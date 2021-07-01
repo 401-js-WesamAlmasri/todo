@@ -6,12 +6,12 @@ const LoggedIn = (Component) => {
     const { loggedIn, user } = useContext(authContext);
 
     useEffect(() => {
-      if (!loggedIn || !user.username){
+      if (!loggedIn || !user){
         props.history.push('/login');
       }
     }, [loggedIn]);
 
-    if (!loggedIn || !user.username) {
+    if (!loggedIn || !user) {
       return <div />;
     }
 

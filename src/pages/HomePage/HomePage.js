@@ -8,13 +8,14 @@ import useAjax from '../../hooks/useAjax';
 import Spinner from 'react-bootstrap/Spinner';
 import LoggedIn from '../../components/LoggedIn/LoggedIn';
 
-
 import './HomePage.scss';
 import MainHeader from '../../components/MainHeader/MainHeader.js';
+import CheckAuth from '../../components/CheckAuth/CheckAuth.js';
 
 const todoAPI = 'https://api-js401.herokuapp.com/api/v1/todo';
 
 const HomePage = (props) => {
+  console.log('home render');
   // states for fetching api
   const [list, setList] = useState([]);
   const [results] = useAjax(todoAPI, 'get', null);
@@ -70,31 +71,26 @@ const HomePage = (props) => {
 
   // update list on delete an item
   useEffect(() => {
-    setList(list => {
+    setList((list) => {
       if (deletedItem && deletedItem.data)
         return list.filter((listItem) => listItem._id !== deletedItem.data._id);
-      else 
-      return list;
-      });
+      else return list;
+    });
   }, [deletedItem]);
 
   // update list on add item
   useEffect(() => {
     setList((list) => {
-      if (addedItem && addedItem.data)
-        return [...list, addedItem.data]
-      else
-        return list;
+      if (addedItem && addedItem.data) return [...list, addedItem.data];
+      else return list;
     });
   }, [addedItem]);
 
   // update list on first open the page
   useEffect(() => {
     setList(() => {
-      if (results) 
-        return results.data.results;
-      else 
-        return [];
+      if (results) return results.data.results;
+      else return [];
     });
   }, [results]);
 
@@ -107,26 +103,31 @@ const HomePage = (props) => {
   return (
     <Container fluid={true}>
       <Container fluid={false}>
-        <Row className='bg-dark my-4'>
-          <MainHeader list={list} />
-        </Row>
+        <CheckAuth permission='read'>
+          <Row className='bg-dark my-4'>
+            <MainHeader list={list} />
+          </Row>
+        </CheckAuth>
         <Row>
-          <Col className='col-4'>
-            <TodoForm handleSubmit={addItem} />
-          </Col>
-
-          <Col className='col-8'>
-            {false ? (
-              <Spinner animation='border' />
-            ) : (
-              <TodoList
-                list={list}
-                handleDelete={deleteItem}
-                handleComplete={toggleComplete}
-                handleUpdate={updateItem}
-              />
-            )}
-          </Col>
+          <CheckAuth permission='create'>
+            <Col className='col-4'>
+              <TodoForm handleSubmit={addItem} />
+            </Col>
+          </CheckAuth>
+          <CheckAuth permission='read'>
+            <Col className='col-8'>
+              {!results ? (
+                <Spinner animation='border' />
+              ) : (
+                <TodoList
+                  list={list}
+                  handleDelete={deleteItem}
+                  handleComplete={toggleComplete}
+                  handleUpdate={updateItem}
+                />
+              )}
+            </Col>
+          </CheckAuth>
         </Row>
       </Container>
     </Container>

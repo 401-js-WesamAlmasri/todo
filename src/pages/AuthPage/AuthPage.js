@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
+import Spinner from 'react-bootstrap/Spinner';
 import useForm from '../../hooks/useForm';
 import useAjax from '../../hooks/useAjax';
 
@@ -11,8 +12,8 @@ const signinUrl = 'https://api-js401.herokuapp.com/signin';
 const signupUrl = 'https://api-js401.herokuapp.com/signup';
 
 const AuthPage = (props) => {
-  const [results, request] = useAjax();
-  const { login } = useContext(authContext);
+  const [results, request, loading] = useAjax();
+  const { login, loggedIn } = useContext(authContext);
 
   const handleAuth = (items) => {
     if (props.register) {
@@ -35,14 +36,19 @@ const AuthPage = (props) => {
   const [handleSubmit, handleChange] = useForm(handleAuth);
 
   useEffect(() => {
-    if (results) {
+    if(loggedIn){
+      props.history.push('/');
+      return;
+    }
+    if (results && results.data) {
       if (!props.register) {
         login(results.data.user, results.data.token);
+        props.history.push('/');
       }else{
         props.history.push('/');
       }
     }
-  }, [results]);
+  }, [results, loggedIn]);
 
   return (
     <Card className='w-50 p-4 mx-auto my-5 shadow-lg bg-white rounded'>
@@ -103,7 +109,7 @@ const AuthPage = (props) => {
           </Form.Group>
 
           <Button variant='primary' type='submit'>
-            {props.register ? 'Register' : 'Login'}
+            {loading ? <Spinner animation='border' /> : (props.register ? 'Register' : 'Login')}
           </Button>
         </Form>
         <Card.Footer>
