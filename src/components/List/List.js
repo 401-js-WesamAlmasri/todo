@@ -9,10 +9,18 @@ const TodoList = (props) => {
 
   const [page, setPage] = useState(1);
 
+  
   const start = (page - 1) * settingState.pageSize;
   const end = start + settingState.pageSize;
+  
+  let list = props.list
+    .filter(item => settingState.hideCompleteItem ? !item.complete : true )
 
-  const numberOfPages = Math.ceil(props.list.length / settingState.pageSize);
+  const numberOfPages = Math.ceil(list.length / settingState.pageSize);
+
+  list = list
+    .sort((a, b) => b[settingState.sortField] - a[settingState.sortField])
+    .slice(start, end);
 
   const paginationItems = [];
   for (let p = 1; p <= numberOfPages; p++) {
@@ -26,10 +34,7 @@ const TodoList = (props) => {
   return (
     <>
       <ListGroup className='ml-4'>
-        {props.list
-          .filter(item => settingState.hideCompleteItem ? !item.complete : true )
-          .sort((a, b) => b[settingState.sortField] - a[settingState.sortField])
-          .slice(start, end)
+        {list
           .map((item) => (
             <Card
               key={item._id}
