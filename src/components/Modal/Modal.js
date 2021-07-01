@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import BootstrapModal from 'react-bootstrap/Modal';
+import CheckAuth from '../CheckAuth/CheckAuth';
 
 const Modal = (props) => {
   const [show, setShow] = useState(false);
@@ -11,22 +12,24 @@ const Modal = (props) => {
 
   const handleInputChange = (e) => {
     setText(e.target.value);
-  }
+  };
 
   const handleSave = () => {
     props.handleUpdate(props.item._id, text);
     setShow(false);
-  }
+  };
 
   return (
     <>
-      <Button
-        onClick={handleShow}
-        className='float-right p-0 mr-2'
-        variant='light'
-      >
-        Edit
-      </Button>
+      <CheckAuth permission='update'>
+        <Button
+          onClick={handleShow}
+          className='float-right p-0 mr-2'
+          variant='light'
+        >
+          Edit
+        </Button>
+      </CheckAuth>
 
       <BootstrapModal
         show={show}
@@ -51,7 +54,9 @@ const Modal = (props) => {
           <Button variant='secondary' onClick={handleClose}>
             Close
           </Button>
-          <Button onClick={handleSave} variant='primary'>Save</Button>
+          <Button onClick={handleSave} variant='primary'>
+            Save
+          </Button>
         </BootstrapModal.Footer>
       </BootstrapModal>
     </>

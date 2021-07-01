@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const useAjax = (endPoint, reqMethod = 'get', body = {}) => {
+const useAjax = (endPoint, reqMethod = 'get', body = {}, authParams={}) => {
   const [url, setUrl] = useState(endPoint);
   const [method, setMethod] = useState(reqMethod);
   const [data, setData] = useState(body);
+  const [auth, setAuth] = useState(authParams);
   const [results, setResults] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -15,10 +16,13 @@ const useAjax = (endPoint, reqMethod = 'get', body = {}) => {
       url,
       data,
       headers: { 'Content-Type': 'application/json' },
+      auth,
     };
+
     (async () => {
       try {
         if (url) {
+          setLoading(true);
           const response = await axios(options);
           setResults(response);
           setLoading(false);
@@ -30,17 +34,18 @@ const useAjax = (endPoint, reqMethod = 'get', body = {}) => {
         setLoading(false);
       }
     })();
-  }, [url, method, data]);
+  }, [url, method, data, auth]);
 
-  const reload = (url, method, data) => {
+  const reload = (url = endPoint, method = reqMethod, data = body, authParams = auth) => {
     setUrl(url);
     setMethod(method);
     setData(data);
+    setAuth(authParams);
     setLoading(true);
     setError(null);
   };
 
-  return [results, loading, reload, error];
+  return [results, reload, loading, error];
 };
 
 export default useAjax;

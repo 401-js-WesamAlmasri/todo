@@ -4,6 +4,7 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import useForm from '../../hooks/useForm';
+import LoggedIn from '../../components/LoggedIn/LoggedIn';
 
 const SettingPage = (props) => {
   const settingState = useContext(settingContext);
@@ -11,15 +12,15 @@ const SettingPage = (props) => {
 
   const savePreferences = (items) => {
       btnRef.current.innerText = 'Saving'
-      settingState.setHideCompleteItem(() => items.hideCompleteItem === 'true'? true : false);
-      settingState.setPageSize(() => items.pageSize);
+      settingState.setHideCompleteItem(() => items.hideCompleteItem === 'true' ? true : false);
+      settingState.setPageSize(() => parseInt(items.pageSize));
       settingState.setSortField(() => items.sortField);
       localStorage.setItem('preferences', JSON.stringify(items));
       setTimeout(() => btnRef.current.innerText = 'Save preferences', 500);
   };
   const initialState = {
     hideCompleteItem: settingState.hideCompleteItem,
-    pageSize: settingState.pageSize,
+    pageSize: parseInt(settingState.pageSize),
     sortField: settingState.sortField
   }
   const [handleSubmit, handleChange] = useForm(savePreferences, initialState, false);
@@ -80,4 +81,4 @@ const SettingPage = (props) => {
   );
 };
 
-export default SettingPage;
+export default LoggedIn(SettingPage);
